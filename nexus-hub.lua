@@ -1,4 +1,4 @@
--- ⚡ VANTRIX HUB ⚡ - Auto TP Direct
+-- ⚡ VANTRIX HUB ⚡ - TP Ultra Renforcé
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
@@ -44,7 +44,7 @@ local subtitle = Instance.new("TextLabel")
 subtitle.Size = UDim2.new(1, 0, 0, 20)
 subtitle.Position = UDim2.new(0, 0, 0, 45)
 subtitle.BackgroundTransparency = 1
-subtitle.Text = "🚀 Instant Auto-Teleport 🚀"
+subtitle.Text = "🚀 Ultra Force TP 🚀"
 subtitle.TextColor3 = Color3.fromRGB(200, 100, 255)
 subtitle.TextScaled = true
 subtitle.Font = Enum.Font.Gotham
@@ -81,24 +81,54 @@ autoBtnCorner.Parent = autoBtn
 frame.Active = true
 frame.Draggable = true
 
--- Fonction TP DIRECT
-local function instantTP()
+-- Fonction TP ULTRA FORCE (toutes les méthodes)
+local function ultraForceTP()
     local char = player.Character
-    if not char or not char:FindFirstChild("HumanoidRootPart") or not savedPos then 
+    if not char or not savedPos then 
+        print("VANTRIX: Pas de character ou position!")
         return false 
     end
     
-    local hrp = char.HumanoidRootPart
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local humanoid = char:FindFirstChild("Humanoid")
     
-    -- TP instantané multi-méthodes
+    if not hrp then 
+        print("VANTRIX: Pas de HumanoidRootPart!")
+        return false 
+    end
+    
+    print("VANTRIX: Début TP ultra force...")
+    
+    -- Méthode 1: Disable humanoid
+    if humanoid then
+        humanoid.PlatformStand = true
+        humanoid.Sit = false
+    end
+    
+    -- Méthode 2: Anchored + multiple CFrame
     hrp.Anchored = true
-    hrp.CFrame = CFrame.new(savedPos)
-    wait(0.05)
-    hrp.Position = savedPos
-    wait(0.05)
-    hrp.Anchored = false
+    for i = 1, 5 do
+        hrp.CFrame = CFrame.new(savedPos)
+        wait(0.02)
+    end
     
-    print("VANTRIX: Auto-TP vers " .. tostring(savedPos))
+    -- Méthode 3: Position + Velocity reset
+    hrp.Position = savedPos
+    hrp.Velocity = Vector3.new(0, 0, 0)
+    hrp.RotVelocity = Vector3.new(0, 0, 0)
+    
+    -- Méthode 4: CFrame avec lookVector
+    hrp.CFrame = CFrame.new(savedPos, savedPos + Vector3.new(0, 0, 1))
+    
+    wait(0.1)
+    
+    -- Re-enable
+    hrp.Anchored = false
+    if humanoid then
+        humanoid.PlatformStand = false
+    end
+    
+    print("VANTRIX: TP ultra force terminé vers " .. tostring(savedPos))
     return true
 end
 
@@ -126,10 +156,10 @@ local function checkForNewItem()
             end
         end
         
-        -- Nouvel objet = TP DIRECT
+        -- Nouvel objet = TP ULTRA FORCE
         if totalTools > lastToolCount then
-            print("VANTRIX: Objet pris! TP instantané...")
-            instantTP()
+            print("VANTRIX: OBJET DÉTECTÉ! TP ULTRA FORCE!")
+            ultraForceTP()
         end
         
         lastToolCount = totalTools
@@ -141,7 +171,7 @@ saveBtn.MouseButton1Click:Connect(function()
     local char = player.Character
     if char and char.HumanoidRootPart then
         savedPos = char.HumanoidRootPart.Position
-        saveBtn.Text = "✅ POSITION SAVED!"
+        saveBtn.Text = "✅ SAVED!"
         saveBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         print("VANTRIX: Position sauvée: " .. tostring(savedPos))
         
@@ -150,12 +180,14 @@ saveBtn.MouseButton1Click:Connect(function()
             saveBtn.Text = "💾 SAVE POSITION"
             saveBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
         end)
+    else
+        print("VANTRIX: ERREUR - Pas de character!")
     end
 end)
 
 autoBtn.MouseButton1Click:Connect(function()
     if not savedPos then
-        autoBtn.Text = "⚠️ SAVE POSITION FIRST!"
+        autoBtn.Text = "⚠️ SAVE FIRST!"
         spawn(function()
             wait(2)
             autoBtn.Text = "🔴 AUTO TP: OFF"
@@ -168,7 +200,7 @@ autoBtn.MouseButton1Click:Connect(function()
         autoBtn.Text = "🟢 AUTO TP: ON"
         autoBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
         title.Text = "⚡ VANTRIX HUB ✅"
-        subtitle.Text = "🚀 Auto-TP Activé! 🚀"
+        subtitle.Text = "🚀 Ultra Force Activé! 🚀"
         
         -- Reset compteur
         lastToolCount = 0
@@ -191,12 +223,12 @@ autoBtn.MouseButton1Click:Connect(function()
             end
         end
         
-        print("VANTRIX: Auto-TP ACTIVÉ! Prends des objets = TP direct!")
+        print("VANTRIX: ULTRA FORCE TP ACTIVÉ! Tools actuels: " .. lastToolCount)
     else
         autoBtn.Text = "🔴 AUTO TP: OFF"
         autoBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
         title.Text = "⚡ VANTRIX HUB ⚡"
-        subtitle.Text = "🚀 Instant Auto-Teleport 🚀"
+        subtitle.Text = "🚀 Ultra Force TP 🚀"
         print("VANTRIX: Auto-TP désactivé")
     end
 end)
@@ -209,6 +241,7 @@ spawn(function()
     end
 end)
 
-print("⚡ VANTRIX HUB ⚡ - Instant Auto-TP!")
-print("🚀 1. Save Position 2. Auto TP ON 3. Prends = TP!")
-print("💎 Pas besoin de test, ça marche direct!")
+print("⚡ VANTRIX HUB ⚡ - Ultra Force TP System!")
+print("🚀 TP avec 4 méthodes combinées!")
+print("💎 Si ça marche pas, le jeu a un anti-cheat très fort!")
+
