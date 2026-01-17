@@ -1,4 +1,4 @@
--- ⚡ NEXUS HUB ⚡ - Auto TP quand tu prends un objet
+-- ⚡ VANTRIX HUB ⚡ - Auto TP CORRIGÉ
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
@@ -7,13 +7,13 @@ local savedPos = nil
 local autoTpEnabled = false
 
 -- Supprime l'ancien GUI
-if player.PlayerGui:FindFirstChild("NexusHub") then
-    player.PlayerGui.NexusHub:Destroy()
+if player.PlayerGui:FindFirstChild("VantrixHub") then
+    player.PlayerGui.VantrixHub:Destroy()
 end
 
 -- GUI
 local gui = Instance.new("ScreenGui")
-gui.Name = "NexusHub"
+gui.Name = "VantrixHub"
 gui.Parent = player.PlayerGui
 
 local frame = Instance.new("Frame")
@@ -30,8 +30,8 @@ corner.Parent = frame
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 40)
 title.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
-title.Text = "⚡ NEXUS HUB ⚡"
-title.TextColor3 = Color3.fromRGB(0, 255, 255)
+title.Text = "⚡ VANTRIX HUB ⚡"
+title.TextColor3 = Color3.fromRGB(255, 0, 255)
 title.TextScaled = true
 title.Font = Enum.Font.GothamBold
 title.Parent = frame
@@ -44,8 +44,8 @@ local subtitle = Instance.new("TextLabel")
 subtitle.Size = UDim2.new(1, 0, 0, 20)
 subtitle.Position = UDim2.new(0, 0, 0, 45)
 subtitle.BackgroundTransparency = 1
-subtitle.Text = "🚀 Auto-Teleport System 🚀"
-subtitle.TextColor3 = Color3.fromRGB(150, 150, 255)
+subtitle.Text = "🚀 Premium Auto-Teleport System 🚀"
+subtitle.TextColor3 = Color3.fromRGB(200, 100, 255)
 subtitle.TextScaled = true
 subtitle.Font = Enum.Font.Gotham
 subtitle.Parent = frame
@@ -105,35 +105,34 @@ statusLabel.Parent = frame
 frame.Active = true
 frame.Draggable = true
 
--- Fonction TP Anti-Detection
-local function autoTeleport()
+-- Fonction TP ULTRA FIABLE
+local function vantrixTP()
     local char = player.Character
-    if not char or not char:FindFirstChild("HumanoidRootPart") then return false end
+    if not char or not char:FindFirstChild("HumanoidRootPart") or not savedPos then 
+        return false 
+    end
     
     local hrp = char.HumanoidRootPart
     
-    -- TP par petits bonds (anti-detection)
-    local startPos = hrp.Position
-    local distance = (savedPos - startPos).Magnitude
+    -- Méthode 1: Anchored + CFrame
+    hrp.Anchored = true
+    hrp.CFrame = CFrame.new(savedPos)
+    wait(0.1)
+    hrp.Anchored = false
     
-    if distance < 5 then return true end -- Déjà proche
+    -- Méthode 2: Position directe
+    hrp.Position = savedPos
+    wait(0.1)
     
-    local steps = math.ceil(distance / 20) -- 20 studs par step
-    
-    for i = 1, steps do
-        if not autoTpEnabled then break end
-        local alpha = i / steps
-        local newPos = startPos:Lerp(savedPos, alpha)
-        hrp.CFrame = CFrame.new(newPos)
-        wait(0.05)
-    end
+    -- Méthode 3: CFrame avec rotation
+    hrp.CFrame = CFrame.new(savedPos, savedPos + Vector3.new(0, 0, 1))
     
     statusLabel.Text = "Status: TP effectué!"
-    print("NEXUS: Auto-TP vers la base!")
+    print("VANTRIX: Ultra-TP vers " .. tostring(savedPos))
     return true
 end
 
--- Détection quand tu prends un objet
+-- Détection d'objets pris
 local lastToolCount = 0
 local function checkForNewItem()
     if not autoTpEnabled or not savedPos then return end
@@ -144,25 +143,24 @@ local function checkForNewItem()
     if char and backpack then
         local totalTools = 0
         
-        -- Compte les tools dans le backpack
+        -- Compte tous les tools
         for _, item in pairs(backpack:GetChildren()) do
             if item:IsA("Tool") then
                 totalTools = totalTools + 1
             end
         end
         
-        -- Compte les tools équipés
         for _, item in pairs(char:GetChildren()) do
             if item:IsA("Tool") then
                 totalTools = totalTools + 1
             end
         end
         
-        -- Si on a plus d'objets qu'avant = objet pris
+        -- Nouvel objet détecté
         if totalTools > lastToolCount then
-            statusLabel.Text = "Status: Objet détecté! TP..."
-            print("NEXUS: Nouvel objet détecté! Auto-TP...")
-            autoTeleport()
+            statusLabel.Text = "Status: Objet pris! TP..."
+            print("VANTRIX: Objet détecté! Auto-TP...")
+            vantrixTP()
         end
         
         lastToolCount = totalTools
@@ -174,10 +172,10 @@ saveBtn.MouseButton1Click:Connect(function()
     local char = player.Character
     if char and char.HumanoidRootPart then
         savedPos = char.HumanoidRootPart.Position
-        saveBtn.Text = "✅ POSITION SAVED!"
+        saveBtn.Text = "✅ SAVED!"
         saveBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         statusLabel.Text = "Status: Position sauvée!"
-        print("NEXUS: Position saved at " .. tostring(savedPos))
+        print("VANTRIX: Position: " .. tostring(savedPos))
         
         spawn(function()
             wait(1.5)
@@ -190,7 +188,7 @@ end)
 
 autoBtn.MouseButton1Click:Connect(function()
     if not savedPos then
-        autoBtn.Text = "⚠️ SAVE POSITION FIRST!"
+        autoBtn.Text = "⚠️ SAVE FIRST!"
         spawn(function()
             wait(2)
             autoBtn.Text = "🔴 AUTO TP: OFF"
@@ -202,13 +200,13 @@ autoBtn.MouseButton1Click:Connect(function()
     if autoTpEnabled then
         autoBtn.Text = "🟢 AUTO TP: ON"
         autoBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-        title.Text = "⚡ NEXUS HUB ✅"
-        statusLabel.Text = "Status: Auto-TP activé!"
+        title.Text = "⚡ VANTRIX HUB ✅"
+        statusLabel.Text = "Status: Auto-TP ON!"
         
         -- Reset compteur
+        lastToolCount = 0
         local char = player.Character
         local backpack = player:FindFirstChild("Backpack")
-        lastToolCount = 0
         
         if char then
             for _, item in pairs(char:GetChildren()) do
@@ -226,13 +224,12 @@ autoBtn.MouseButton1Click:Connect(function()
             end
         end
         
-        print("NEXUS: Auto-TP activé! Objets actuels: " .. lastToolCount)
+        print("VANTRIX: Auto-TP ON! Tools: " .. lastToolCount)
     else
         autoBtn.Text = "🔴 AUTO TP: OFF"
         autoBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        title.Text = "⚡ NEXUS HUB ⚡"
-        statusLabel.Text = "Status: Auto-TP désactivé"
-        print("NEXUS: Auto-TP désactivé!")
+        title.Text = "⚡ VANTRIX HUB ⚡"
+        statusLabel.Text = "Status: Auto-TP OFF"
     end
 end)
 
@@ -240,24 +237,22 @@ testBtn.MouseButton1Click:Connect(function()
     if savedPos then
         testBtn.Text = "🔄 TESTING..."
         testBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-        statusLabel.Text = "Status: Test en cours..."
+        
+        if vantrixTP() then
+            testBtn.Text = "✅ WORKS!"
+            testBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        else
+            testBtn.Text = "❌ FAILED!"
+            testBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+        end
         
         spawn(function()
-            if autoTeleport() then
-                testBtn.Text = "✅ TEST OK!"
-                testBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-            else
-                testBtn.Text = "❌ TEST FAILED!"
-                testBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-            end
-            
             wait(2)
             testBtn.Text = "🧪 TEST TP"
             testBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
-            statusLabel.Text = "Status: Prêt"
         end)
     else
-        testBtn.Text = "⚠️ NO POSITION!"
+        testBtn.Text = "⚠️ NO POS!"
         spawn(function()
             wait(1)
             testBtn.Text = "🧪 TEST TP"
@@ -273,6 +268,6 @@ spawn(function()
     end
 end)
 
-print("⚡ NEXUS HUB ⚡ - Auto-TP System Loaded!")
-print("🚀 Dès que tu prends un objet = TP automatique!")
-print("💎 1. Save Position 2. Auto TP: ON 3. Prends des objets!")
+print("⚡ VANTRIX HUB ⚡ - Premium Auto-TP System!")
+print("🚀 Created by Vantrix Team")
+print("💎 1. Save Position 2. Test TP 3. Auto TP ON")
