@@ -1,36 +1,33 @@
--- ⚡ NEXUS HUB ⚡ - Ultimate TP Script
+-- ⚡ NEXUS HUB ⚡ - Anti-Detection TP
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
 -- Variables
 local savedPos = nil
 
--- Supprime l'ancien GUI s'il existe
+-- Supprime l'ancien GUI
 if player.PlayerGui:FindFirstChild("NexusHub") then
     player.PlayerGui.NexusHub:Destroy()
 end
 
--- GUI Style Hub
+-- GUI
 local gui = Instance.new("ScreenGui")
 gui.Name = "NexusHub"
 gui.Parent = player.PlayerGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 280, 0, 160)
-frame.Position = UDim2.new(0.5, -140, 0.5, -80)
+frame.Size = UDim2.new(0, 280, 0, 200)
+frame.Position = UDim2.new(0.5, -140, 0.5, -100)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
 frame.BorderSizePixel = 0
 frame.Parent = gui
 
--- Coins arrondis
 local corner = Instance.new("UICorner")
 corner.CornerRadius = UDim.new(0, 12)
 corner.Parent = frame
 
--- Titre stylé
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 40)
-title.Position = UDim2.new(0, 0, 0, 0)
 title.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
 title.Text = "⚡ NEXUS HUB ⚡"
 title.TextColor3 = Color3.fromRGB(0, 255, 255)
@@ -42,18 +39,16 @@ local titleCorner = Instance.new("UICorner")
 titleCorner.CornerRadius = UDim.new(0, 12)
 titleCorner.Parent = title
 
--- Sous-titre
 local subtitle = Instance.new("TextLabel")
 subtitle.Size = UDim2.new(1, 0, 0, 20)
 subtitle.Position = UDim2.new(0, 0, 0, 45)
 subtitle.BackgroundTransparency = 1
-subtitle.Text = "🚀 Ultimate Teleportation System 🚀"
+subtitle.Text = "🚀 Anti-Detection System 🚀"
 subtitle.TextColor3 = Color3.fromRGB(150, 150, 255)
 subtitle.TextScaled = true
 subtitle.Font = Enum.Font.Gotham
 subtitle.Parent = frame
 
--- Bouton Save stylé
 local saveBtn = Instance.new("TextButton")
 saveBtn.Size = UDim2.new(0.9, 0, 0, 30)
 saveBtn.Position = UDim2.new(0.05, 0, 0, 75)
@@ -68,12 +63,11 @@ local saveBtnCorner = Instance.new("UICorner")
 saveBtnCorner.CornerRadius = UDim.new(0, 8)
 saveBtnCorner.Parent = saveBtn
 
--- Bouton TP stylé
 local tpBtn = Instance.new("TextButton")
 tpBtn.Size = UDim2.new(0.9, 0, 0, 30)
 tpBtn.Position = UDim2.new(0.05, 0, 0, 115)
 tpBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
-tpBtn.Text = "⚡ TELEPORT NOW"
+tpBtn.Text = "⚡ BYPASS TP"
 tpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 tpBtn.TextScaled = true
 tpBtn.Font = Enum.Font.GothamBold
@@ -83,30 +77,64 @@ local tpBtnCorner = Instance.new("UICorner")
 tpBtnCorner.CornerRadius = UDim.new(0, 8)
 tpBtnCorner.Parent = tpBtn
 
--- Drag
+local slowTpBtn = Instance.new("TextButton")
+slowTpBtn.Size = UDim2.new(0.9, 0, 0, 30)
+slowTpBtn.Position = UDim2.new(0.05, 0, 0, 155)
+slowTpBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
+slowTpBtn.Text = "🐌 SLOW TP (Safe)"
+slowTpBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+slowTpBtn.TextScaled = true
+slowTpBtn.Font = Enum.Font.GothamBold
+slowTpBtn.Parent = frame
+
+local slowTpBtnCorner = Instance.new("UICorner")
+slowTpBtnCorner.CornerRadius = UDim.new(0, 8)
+slowTpBtnCorner.Parent = slowTpBtn
+
 frame.Active = true
 frame.Draggable = true
 
--- Fonction TP
-local function nexusTP(position)
+-- Fonction TP Bypass
+local function bypassTP(position)
     local char = player.Character
-    if not char then 
-        print("NEXUS: Character not found!")
-        return false
-    end
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return false end
     
-    local hrp = char:FindFirstChild("HumanoidRootPart")
-    if not hrp then 
-        print("NEXUS: HumanoidRootPart not found!")
-        return false
-    end
+    local hrp = char.HumanoidRootPart
+    local humanoid = char:FindFirstChild("Humanoid")
     
+    -- Méthode 1: Network Owner
+    hrp:SetNetworkOwner(nil)
+    wait(0.1)
     hrp.CFrame = CFrame.new(position)
-    print("NEXUS: Teleported to " .. tostring(position))
+    wait(0.1)
+    hrp:SetNetworkOwner(player)
+    
+    print("NEXUS: Bypass TP effectué!")
     return true
 end
 
--- Events avec animations
+-- Fonction TP Lent (très sûr)
+local function slowTP(targetPos)
+    local char = player.Character
+    if not char or not char:FindFirstChild("HumanoidRootPart") then return false end
+    
+    local hrp = char.HumanoidRootPart
+    local startPos = hrp.Position
+    local distance = (targetPos - startPos).Magnitude
+    local steps = math.ceil(distance / 15) -- 15 studs par step
+    
+    for i = 1, steps do
+        local alpha = i / steps
+        local newPos = startPos:Lerp(targetPos, alpha)
+        hrp.CFrame = CFrame.new(newPos)
+        wait(0.1)
+    end
+    
+    print("NEXUS: Slow TP effectué!")
+    return true
+end
+
+-- Events
 saveBtn.MouseButton1Click:Connect(function()
     local char = player.Character
     if char and char.HumanoidRootPart then
@@ -120,21 +148,16 @@ saveBtn.MouseButton1Click:Connect(function()
             saveBtn.Text = "💾 SAVE POSITION"
             saveBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
         end)
-    else
-        saveBtn.Text = "❌ ERROR!"
-        saveBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        spawn(function()
-            wait(1)
-            saveBtn.Text = "💾 SAVE POSITION"
-            saveBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-        end)
     end
 end)
 
 tpBtn.MouseButton1Click:Connect(function()
     if savedPos then
-        if nexusTP(savedPos) then
-            tpBtn.Text = "🚀 TELEPORTED!"
+        tpBtn.Text = "🔄 BYPASSING..."
+        tpBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+        
+        if bypassTP(savedPos) then
+            tpBtn.Text = "🚀 BYPASSED!"
             tpBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
         else
             tpBtn.Text = "❌ FAILED!"
@@ -142,22 +165,45 @@ tpBtn.MouseButton1Click:Connect(function()
         end
         
         spawn(function()
-            wait(1.5)
-            tpBtn.Text = "⚡ TELEPORT NOW"
+            wait(2)
+            tpBtn.Text = "⚡ BYPASS TP"
             tpBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
         end)
     else
-        tpBtn.Text = "⚠️ NO POSITION SAVED!"
-        tpBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+        tpBtn.Text = "⚠️ NO POSITION!"
         spawn(function()
-            wait(1.5)
-            tpBtn.Text = "⚡ TELEPORT NOW"
-            tpBtn.BackgroundColor3 = Color3.fromRGB(255, 100, 0)
+            wait(1)
+            tpBtn.Text = "⚡ BYPASS TP"
         end)
     end
 end)
 
-print("⚡ NEXUS HUB ⚡ - Ultimate TP Script Loaded!")
-print("🚀 Created by Nexus Team")
-print("💎 Premium Teleportation Experience")
+slowTpBtn.MouseButton1Click:Connect(function()
+    if savedPos then
+        slowTpBtn.Text = "🐌 TELEPORTING..."
+        slowTpBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
+        
+        spawn(function()
+            if slowTP(savedPos) then
+                slowTpBtn.Text = "✅ SAFE TP DONE!"
+                slowTpBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+            else
+                slowTpBtn.Text = "❌ FAILED!"
+                slowTpBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            end
+            
+            wait(2)
+            slowTpBtn.Text = "🐌 SLOW TP (Safe)"
+            slowTpBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
+        end)
+    else
+        slowTpBtn.Text = "⚠️ NO POSITION!"
+        spawn(function()
+            wait(1)
+            slowTpBtn.Text = "🐌 SLOW TP (Safe)"
+        end)
+    end
+end)
 
+print("⚡ NEXUS HUB ⚡ - Anti-Detection Loaded!")
+print("🚀 Use SLOW TP if BYPASS TP gets detected!")
