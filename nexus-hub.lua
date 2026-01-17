@@ -1,80 +1,121 @@
+-- 🧠 BRAINROT INSTA TP - DELTA MOBILE OPTIMIZED 🧠
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local basePosition = Vector3.new(0, 10, 0)
 
-pcall(function() player.PlayerGui.BrainrotTP:Destroy() end)
+-- Supprime ancien GUI
+if player.PlayerGui:FindFirstChild("BrainrotTP") then
+    player.PlayerGui.BrainrotTP:Destroy()
+end
 
+-- GUI Ultra Simple pour Delta
 local gui = Instance.new("ScreenGui")
 gui.Name = "BrainrotTP"
 gui.Parent = player.PlayerGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 160, 0, 60)
-frame.Position = UDim2.new(0, 10, 0, 10)
-frame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+frame.Size = UDim2.new(0, 140, 0, 50)
+frame.Position = UDim2.new(0, 5, 0, 5)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+frame.BorderSizePixel = 0
 frame.Active = true
 frame.Draggable = true
 frame.Parent = gui
 
-local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 8)
-corner.Parent = frame
-
+-- Titre compact
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 20)
-title.BackgroundColor3 = Color3.fromRGB(255, 100, 255)
+title.Size = UDim2.new(1, 0, 0, 18)
+title.BackgroundColor3 = Color3.fromRGB(255, 50, 150)
 title.Text = "🧠 BRAINROT TP"
 title.TextColor3 = Color3.white
-title.TextScaled = true
-title.Font = Enum.Font.GothamBold
+title.TextSize = 12
+title.Font = Enum.Font.SourceSansBold
 title.Parent = frame
 
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 8)
-titleCorner.Parent = title
-
+-- Bouton Save simple
 local saveBtn = Instance.new("TextButton")
-saveBtn.Size = UDim2.new(0.9, 0, 0, 15)
-saveBtn.Position = UDim2.new(0.05, 0, 0, 22)
-saveBtn.BackgroundColor3 = Color3.fromRGB(100, 255, 100)
-saveBtn.Text = "💾 SAVE BASE"
-saveBtn.TextScaled = true
+saveBtn.Size = UDim2.new(0.6, 0, 0, 14)
+saveBtn.Position = UDim2.new(0.02, 0, 0, 20)
+saveBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+saveBtn.Text = "💾 SAVE"
+saveBtn.TextColor3 = Color3.white
+saveBtn.TextSize = 10
+saveBtn.Font = Enum.Font.SourceSans
 saveBtn.Parent = frame
 
-local saveBtnCorner = Instance.new("UICorner")
-saveBtnCorner.CornerRadius = UDim.new(0, 4)
-saveBtnCorner.Parent = saveBtn
-
+-- Status simple
 local status = Instance.new("TextLabel")
-status.Size = UDim2.new(1, 0, 0, 12)
-status.Position = UDim2.new(0, 0, 0, 42)
+status.Size = UDim2.new(0.35, 0, 0, 14)
+status.Position = UDim2.new(0.63, 0, 0, 20)
 status.BackgroundTransparency = 1
 status.Text = "⚡ READY"
-status.TextColor3 = Color3.fromRGB(100, 255, 100)
-status.TextScaled = true
+status.TextColor3 = Color3.fromRGB(0, 255, 0)
+status.TextSize = 9
+status.Font = Enum.Font.SourceSans
 status.Parent = frame
 
-local function instantTP()
-    local char = player.Character
-    if char and char.HumanoidRootPart then
-        char.HumanoidRootPart.CFrame = CFrame.new(basePosition)
-        status.Text = "🧠 TÉLÉPORTÉ!"
-        status.TextColor3 = Color3.fromRGB(255, 100, 255)
-        spawn(function() wait(1.5) status.Text = "⚡ READY" status.TextColor3 = Color3.fromRGB(100, 255, 100) end)
-    end
+-- Status info
+local info = Instance.new("TextLabel")
+info.Size = UDim2.new(1, 0, 0, 12)
+info.Position = UDim2.new(0, 0, 0, 36)
+info.BackgroundTransparency = 1
+info.Text = "Ramasse = TP Direct"
+info.TextColor3 = Color3.fromRGB(150, 150, 150)
+info.TextSize = 8
+info.Font = Enum.Font.SourceSans
+info.Parent = frame
+
+-- Fonction TP DELTA OPTIMIZED
+local function deltaTP()
+    spawn(function()
+        local char = player.Character
+        if char and char:FindFirstChild("HumanoidRootPart") then
+            -- Méthode Delta Mobile
+            char.HumanoidRootPart.CFrame = CFrame.new(basePosition)
+            status.Text = "🧠 TP!"
+            status.TextColor3 = Color3.fromRGB(255, 0, 255)
+            wait(1)
+            status.Text = "⚡ READY"
+            status.TextColor3 = Color3.fromRGB(0, 255, 0)
+        end
+    end)
 end
 
+-- Save pour Delta
 saveBtn.MouseButton1Click:Connect(function()
-    if player.Character and player.Character.HumanoidRootPart then
-        basePosition = player.Character.HumanoidRootPart.Position
-        saveBtn.Text = "✅ SAVED!"
-        spawn(function() wait(1) saveBtn.Text = "💾 SAVE BASE" end)
+    local char = player.Character
+    if char and char:FindFirstChild("HumanoidRootPart") then
+        basePosition = char.HumanoidRootPart.Position
+        saveBtn.Text = "✅ OK"
+        saveBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+        wait(1)
+        saveBtn.Text = "💾 SAVE"
+        saveBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
     end
 end)
 
-player.Backpack.ChildAdded:Connect(function(child) if child:IsA("Tool") then instantTP() end end)
-player.CharacterAdded:Connect(function(char) char.ChildAdded:Connect(function(child) if child:IsA("Tool") then instantTP() end end) end)
-if player.Character then player.Character.ChildAdded:Connect(function(child) if child:IsA("Tool") then instantTP() end end) end
+-- Détection Delta Mobile
+local function onPickup(item)
+    if item:IsA("Tool") then
+        deltaTP()
+    end
+end
 
-print("🧠 BRAINROT INSTA TP LOADED!")
+-- Connexions Delta
+player.Backpack.ChildAdded:Connect(onPickup)
+
+-- Character setup
+local function setupChar(char)
+    if char then
+        char.ChildAdded:Connect(onPickup)
+    end
+end
+
+player.CharacterAdded:Connect(setupChar)
+if player.Character then
+    setupChar(player.Character)
+end
+
+print("🧠 BRAINROT TP - DELTA READY!")
+
 
