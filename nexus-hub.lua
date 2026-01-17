@@ -1,4 +1,4 @@
--- ⚡ VANTRIX HUB ⚡ - Auto TP CORRIGÉ
+-- ⚡ VANTRIX HUB ⚡ - Auto TP Direct
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
@@ -17,8 +17,8 @@ gui.Name = "VantrixHub"
 gui.Parent = player.PlayerGui
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 280, 0, 240)
-frame.Position = UDim2.new(0.5, -140, 0.5, -120)
+frame.Size = UDim2.new(0, 280, 0, 180)
+frame.Position = UDim2.new(0.5, -140, 0.5, -90)
 frame.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
 frame.BorderSizePixel = 0
 frame.Parent = gui
@@ -44,14 +44,14 @@ local subtitle = Instance.new("TextLabel")
 subtitle.Size = UDim2.new(1, 0, 0, 20)
 subtitle.Position = UDim2.new(0, 0, 0, 45)
 subtitle.BackgroundTransparency = 1
-subtitle.Text = "🚀 Premium Auto-Teleport System 🚀"
+subtitle.Text = "🚀 Instant Auto-Teleport 🚀"
 subtitle.TextColor3 = Color3.fromRGB(200, 100, 255)
 subtitle.TextScaled = true
 subtitle.Font = Enum.Font.Gotham
 subtitle.Parent = frame
 
 local saveBtn = Instance.new("TextButton")
-saveBtn.Size = UDim2.new(0.9, 0, 0, 30)
+saveBtn.Size = UDim2.new(0.9, 0, 0, 35)
 saveBtn.Position = UDim2.new(0.05, 0, 0, 75)
 saveBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
 saveBtn.Text = "💾 SAVE POSITION"
@@ -65,8 +65,8 @@ saveBtnCorner.CornerRadius = UDim.new(0, 8)
 saveBtnCorner.Parent = saveBtn
 
 local autoBtn = Instance.new("TextButton")
-autoBtn.Size = UDim2.new(0.9, 0, 0, 30)
-autoBtn.Position = UDim2.new(0.05, 0, 0, 115)
+autoBtn.Size = UDim2.new(0.9, 0, 0, 35)
+autoBtn.Position = UDim2.new(0.05, 0, 0, 120)
 autoBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 autoBtn.Text = "🔴 AUTO TP: OFF"
 autoBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -78,35 +78,11 @@ local autoBtnCorner = Instance.new("UICorner")
 autoBtnCorner.CornerRadius = UDim.new(0, 8)
 autoBtnCorner.Parent = autoBtn
 
-local testBtn = Instance.new("TextButton")
-testBtn.Size = UDim2.new(0.9, 0, 0, 30)
-testBtn.Position = UDim2.new(0.05, 0, 0, 155)
-testBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
-testBtn.Text = "🧪 TEST TP"
-testBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-testBtn.TextScaled = true
-testBtn.Font = Enum.Font.GothamBold
-testBtn.Parent = frame
-
-local testBtnCorner = Instance.new("UICorner")
-testBtnCorner.CornerRadius = UDim.new(0, 8)
-testBtnCorner.Parent = testBtn
-
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(1, 0, 0, 20)
-statusLabel.Position = UDim2.new(0, 0, 0, 195)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Status: Prêt"
-statusLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-statusLabel.TextScaled = true
-statusLabel.Font = Enum.Font.Gotham
-statusLabel.Parent = frame
-
 frame.Active = true
 frame.Draggable = true
 
--- Fonction TP ULTRA FIABLE
-local function vantrixTP()
+-- Fonction TP DIRECT
+local function instantTP()
     local char = player.Character
     if not char or not char:FindFirstChild("HumanoidRootPart") or not savedPos then 
         return false 
@@ -114,21 +90,15 @@ local function vantrixTP()
     
     local hrp = char.HumanoidRootPart
     
-    -- Méthode 1: Anchored + CFrame
+    -- TP instantané multi-méthodes
     hrp.Anchored = true
     hrp.CFrame = CFrame.new(savedPos)
-    wait(0.1)
+    wait(0.05)
+    hrp.Position = savedPos
+    wait(0.05)
     hrp.Anchored = false
     
-    -- Méthode 2: Position directe
-    hrp.Position = savedPos
-    wait(0.1)
-    
-    -- Méthode 3: CFrame avec rotation
-    hrp.CFrame = CFrame.new(savedPos, savedPos + Vector3.new(0, 0, 1))
-    
-    statusLabel.Text = "Status: TP effectué!"
-    print("VANTRIX: Ultra-TP vers " .. tostring(savedPos))
+    print("VANTRIX: Auto-TP vers " .. tostring(savedPos))
     return true
 end
 
@@ -156,11 +126,10 @@ local function checkForNewItem()
             end
         end
         
-        -- Nouvel objet détecté
+        -- Nouvel objet = TP DIRECT
         if totalTools > lastToolCount then
-            statusLabel.Text = "Status: Objet pris! TP..."
-            print("VANTRIX: Objet détecté! Auto-TP...")
-            vantrixTP()
+            print("VANTRIX: Objet pris! TP instantané...")
+            instantTP()
         end
         
         lastToolCount = totalTools
@@ -172,23 +141,21 @@ saveBtn.MouseButton1Click:Connect(function()
     local char = player.Character
     if char and char.HumanoidRootPart then
         savedPos = char.HumanoidRootPart.Position
-        saveBtn.Text = "✅ SAVED!"
+        saveBtn.Text = "✅ POSITION SAVED!"
         saveBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        statusLabel.Text = "Status: Position sauvée!"
-        print("VANTRIX: Position: " .. tostring(savedPos))
+        print("VANTRIX: Position sauvée: " .. tostring(savedPos))
         
         spawn(function()
             wait(1.5)
             saveBtn.Text = "💾 SAVE POSITION"
             saveBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-            statusLabel.Text = "Status: Prêt"
         end)
     end
 end)
 
 autoBtn.MouseButton1Click:Connect(function()
     if not savedPos then
-        autoBtn.Text = "⚠️ SAVE FIRST!"
+        autoBtn.Text = "⚠️ SAVE POSITION FIRST!"
         spawn(function()
             wait(2)
             autoBtn.Text = "🔴 AUTO TP: OFF"
@@ -201,7 +168,7 @@ autoBtn.MouseButton1Click:Connect(function()
         autoBtn.Text = "🟢 AUTO TP: ON"
         autoBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
         title.Text = "⚡ VANTRIX HUB ✅"
-        statusLabel.Text = "Status: Auto-TP ON!"
+        subtitle.Text = "🚀 Auto-TP Activé! 🚀"
         
         -- Reset compteur
         lastToolCount = 0
@@ -224,39 +191,13 @@ autoBtn.MouseButton1Click:Connect(function()
             end
         end
         
-        print("VANTRIX: Auto-TP ON! Tools: " .. lastToolCount)
+        print("VANTRIX: Auto-TP ACTIVÉ! Prends des objets = TP direct!")
     else
         autoBtn.Text = "🔴 AUTO TP: OFF"
         autoBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
         title.Text = "⚡ VANTRIX HUB ⚡"
-        statusLabel.Text = "Status: Auto-TP OFF"
-    end
-end)
-
-testBtn.MouseButton1Click:Connect(function()
-    if savedPos then
-        testBtn.Text = "🔄 TESTING..."
-        testBtn.BackgroundColor3 = Color3.fromRGB(255, 255, 0)
-        
-        if vantrixTP() then
-            testBtn.Text = "✅ WORKS!"
-            testBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
-        else
-            testBtn.Text = "❌ FAILED!"
-            testBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-        end
-        
-        spawn(function()
-            wait(2)
-            testBtn.Text = "🧪 TEST TP"
-            testBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 255)
-        end)
-    else
-        testBtn.Text = "⚠️ NO POS!"
-        spawn(function()
-            wait(1)
-            testBtn.Text = "🧪 TEST TP"
-        end)
+        subtitle.Text = "🚀 Instant Auto-Teleport 🚀"
+        print("VANTRIX: Auto-TP désactivé")
     end
 end)
 
@@ -268,6 +209,6 @@ spawn(function()
     end
 end)
 
-print("⚡ VANTRIX HUB ⚡ - Premium Auto-TP System!")
-print("🚀 Created by Vantrix Team")
-print("💎 1. Save Position 2. Test TP 3. Auto TP ON")
+print("⚡ VANTRIX HUB ⚡ - Instant Auto-TP!")
+print("🚀 1. Save Position 2. Auto TP ON 3. Prends = TP!")
+print("💎 Pas besoin de test, ça marche direct!")
